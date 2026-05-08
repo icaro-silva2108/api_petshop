@@ -1,4 +1,4 @@
-package com.icaro.api_petshop.enums;
+package com.icaro.api_petshop.pet.model.enums;
 
 public enum AnimalSize {
     SMALL, MEDIUM, LARGE
