@@ -17,7 +17,7 @@ public class PetService {
             int age,
             AnimalSize size
     ) {
-        Pet newPet = new Pet(
+        return new Pet(
                 tutor,
                 name,
                 type,
@@ -25,7 +25,5 @@ public class PetService {
                 breed,
                 size, age
         );
-        tutor.getPetList().add(newPet);
-        return newPet;
     }
 }

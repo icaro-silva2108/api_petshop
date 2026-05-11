@@ -21,14 +21,14 @@ import lombok.NoArgsConstructor;
 public class Appointment {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToMany
+    @ManyToOne
     @JoinColumn(name = "tutor_id")
     private Tutor petTutor;
 
-    @ManyToMany
+    @ManyToOne
     @JoinColumn(name = "pet_id")
     private Pet pet;
 

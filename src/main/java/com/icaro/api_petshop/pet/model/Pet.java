@@ -19,7 +19,7 @@ import lombok.Setter;
 public class Pet {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne
@@ -65,13 +65,16 @@ public class Pet {
         this.sex = Objects.requireNonNull(sex, "pet must have a sex");
         this.breed = Objects.requireNonNull(breed, "pet must have a breed");
         this.size = Objects.requireNonNull(size, "pet must have a size");
-        this.age = age;
+        this.age = Objects.requireNonNull(age, "pet must have an age");
 
         if (name.isBlank()) {
             throw new IllegalArgumentException("name cannot be empty");
         }
         if (breed.isBlank()) {
             throw new IllegalArgumentException("breed cannot be empty");
+        }
+        if (age < 0) {
+            throw new IllegalArgumentException("age cannot be negative");
         }
     }
 }
