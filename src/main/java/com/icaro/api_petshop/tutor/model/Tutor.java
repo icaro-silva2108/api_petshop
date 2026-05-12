@@ -43,4 +43,11 @@ public class Tutor {
             throw new IllegalArgumentException("password hash cannot be empty");
         }
     }
+
+    public void changePassword(String newPasswordHash) {
+        this.passwordHash = Objects.requireNonNull(newPasswordHash, "password hash cannot be null");
+        if (newPasswordHash.isBlank()) {
+            throw new IllegalArgumentException("password hash cannot be empty");
+        }
+    }
 }
