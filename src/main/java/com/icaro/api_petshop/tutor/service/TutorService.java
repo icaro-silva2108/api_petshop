@@ -1,6 +1,9 @@
 package com.icaro.api_petshop.tutor.service;
 
+import com.icaro.api_petshop.exceptions.InvalidCredentialsException;
 import com.icaro.api_petshop.pet.model.Pet;
+import com.icaro.api_petshop.tutor.dto.TutorRequestDTO;
+import com.icaro.api_petshop.tutor.dto.TutorResponseDTO;
 import com.icaro.api_petshop.tutor.dto.TutorUpdateDTO;
 import com.icaro.api_petshop.tutor.model.Tutor;
 import com.icaro.api_petshop.tutor.repository.TutorRepository;
@@ -19,11 +22,30 @@ public class TutorService {
     private final TutorRepository tutorRepository;
     private final PasswordEncoder passwordEncoder;
 
-    public Tutor createTutor(String name, String email, String password) {
+    private TutorResponseDTO toResponseDTO(Tutor tutor) {
 
-        String passwordHash = passwordEncoder.encode(password);
-        Tutor tutor = new Tutor(name, email, passwordHash);
-        return tutorRepository.save(tutor);
+        return new TutorResponseDTO(
+                tutor.getId(),
+                tutor.getName(),
+                tutor.getEmail());
+    }
+
+    public void loginValidation(String email, String password) {
+
+        Tutor tutor = tutorRepository.findByEmail(email).orElseThrow(InvalidCredentialsException::new);
+
+        if (!passwordEncoder.matches(password, tutor.getPasswordHash())) {
+            throw new InvalidCredentialsException();
+        }
+    }
+
+    public TutorResponseDTO createTutor(TutorRequestDTO dto) {
+
+        String passwordHash = passwordEncoder.encode(dto.password());
+        Tutor tutor = new Tutor(dto.name(), dto.email(), passwordHash);
+
+        tutorRepository.save(tutor);
+        return toResponseDTO(tutor);
     }
 
     public Tutor findByEmail(String email) {
@@ -31,7 +53,7 @@ public class TutorService {
         return tutorRepository.findByEmail(email).orElseThrow(EmailNotFound::new);
     }
 
-    public Tutor updateTutor(String email, TutorUpdateDTO dto) {
+    public TutorResponseDTO updateTutor(String email, TutorUpdateDTO dto) {
 
         Tutor tutor = findByEmail(email);
 
@@ -45,7 +67,8 @@ public class TutorService {
             tutor.changePassword(passwordEncoder.encode(dto.password()));
         }
 
-        return tutorRepository.save(tutor);
+        tutorRepository.save(tutor);
+        return toResponseDTO(tutor);
     }
 
     public void deleteTutor(String email) {
