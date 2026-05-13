@@ -3,6 +3,8 @@ package com.icaro.api_petshop.infra;
 
 import com.icaro.api_petshop.exceptions.EmailNotFound;
 import com.icaro.api_petshop.exceptions.InvalidCredentialsException;
+import com.icaro.api_petshop.exceptions.UnauthorizedException;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -22,5 +24,17 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
     private ResponseEntity<String> InvalidCredentialHandler(InvalidCredentialsException exception) {
 
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(exception.getMessage());
+    }
+
+    @ExceptionHandler(UnauthorizedException.class)
+    private ResponseEntity<String> UnauthorizedHandler(UnauthorizedException exception) {
+
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(exception.getMessage());
+    }
+
+    @ExceptionHandler(EntityNotFoundException.class)
+    private ResponseEntity<String> EntityNotFoundHandler(EntityNotFoundException exception) {
+
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(exception.getMessage());
     }
 }

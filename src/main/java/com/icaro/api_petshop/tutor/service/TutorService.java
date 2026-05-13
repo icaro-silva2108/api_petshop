@@ -2,6 +2,7 @@ package com.icaro.api_petshop.tutor.service;
 
 import com.icaro.api_petshop.exceptions.InvalidCredentialsException;
 import com.icaro.api_petshop.pet.model.Pet;
+import com.icaro.api_petshop.pet.repository.PetRepository;
 import com.icaro.api_petshop.tutor.dto.TutorRequestDTO;
 import com.icaro.api_petshop.tutor.dto.TutorResponseDTO;
 import com.icaro.api_petshop.tutor.dto.TutorUpdateDTO;
@@ -20,6 +21,7 @@ import org.springframework.stereotype.Service;
 public class TutorService {
 
     private final TutorRepository tutorRepository;
+    private final PetRepository petRepository;
     private final PasswordEncoder passwordEncoder;
 
     private TutorResponseDTO toResponseDTO(Tutor tutor) {
@@ -74,6 +76,7 @@ public class TutorService {
     public void deleteTutor(String email) {
 
         Tutor tutor = findByEmail(email);
+        petRepository.deleteByTutor(tutor);
         tutorRepository.deleteByEmail(tutor);
     }
 
