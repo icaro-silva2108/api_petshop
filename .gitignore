@@ -22,7 +22,7 @@ out/
 
 ### Enviromental Variables ###
 .env
-application-local.properties
+src/main/resources/application.yaml
 
 ### NetBeans ###
 /nbproject/private/
