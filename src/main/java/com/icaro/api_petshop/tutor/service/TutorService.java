@@ -1,6 +1,7 @@
 package com.icaro.api_petshop.tutor.service;
 
 import com.icaro.api_petshop.exceptions.InvalidCredentialsException;
+import com.icaro.api_petshop.pet.dto.PetResponseDTO;
 import com.icaro.api_petshop.pet.model.Pet;
 import com.icaro.api_petshop.pet.repository.PetRepository;
 import com.icaro.api_petshop.tutor.dto.TutorRequestDTO;
@@ -30,6 +31,19 @@ public class TutorService {
                 tutor.getId(),
                 tutor.getName(),
                 tutor.getEmail());
+    }
+
+    private PetResponseDTO toPetResponseDTO(Pet pet) {
+        return new PetResponseDTO(
+                pet.getId(),
+                pet.getTutor().getId(),
+                pet.getName(),
+                pet.getType(),
+                pet.getSex(),
+                pet.getBreed(),
+                pet.getSize(),
+                pet.getAge()
+        );
     }
 
     public void loginValidation(String email, String password) {
@@ -80,8 +94,11 @@ public class TutorService {
         tutorRepository.deleteByEmail(tutor);
     }
 
-    public List<Pet> getTutorPets(String email) {
+    public List<PetResponseDTO> getTutorPets(String email) {
 
-        return tutorRepository.findPetsByTutorEmail(email);
+        return tutorRepository.findPetsByTutorEmail(email)
+                .stream()
+                .map(this::toPetResponseDTO)
+                .toList();
     }
 }
