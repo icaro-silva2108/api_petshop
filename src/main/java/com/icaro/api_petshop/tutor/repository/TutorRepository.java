@@ -8,14 +8,12 @@ import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
-import jakarta.transaction.Transactional;
 import org.springframework.data.repository.query.Param;
 
 public interface TutorRepository extends JpaRepository<Tutor, Long> {
 
     Optional<Tutor> findByEmail(String email);
 
-    @Transactional
     void deleteByEmail(Tutor tutor);
 
     @Query("SELECT p FROM Pet p WHERE p.tutor.email = :email")

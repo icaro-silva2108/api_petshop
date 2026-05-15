@@ -16,9 +16,11 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class TutorService {
 
     private final TutorRepository tutorRepository;
@@ -64,6 +66,7 @@ public class TutorService {
         return toResponseDTO(tutor);
     }
 
+    @Transactional(readOnly = true)
     public Tutor findByEmail(String email) {
 
         return tutorRepository.findByEmail(email).orElseThrow(EmailNotFound::new);
@@ -94,6 +97,7 @@ public class TutorService {
         tutorRepository.deleteByEmail(tutor);
     }
 
+    @Transactional(readOnly = true)
     public List<PetResponseDTO> getTutorPets(String email) {
 
         return tutorRepository.findPetsByTutorEmail(email)

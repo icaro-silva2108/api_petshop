@@ -16,11 +16,13 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import jakarta.persistence.EntityNotFoundException;
+import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class AppointmentService {
 
     private final AppointmentRepository appointmentRepository;
@@ -94,6 +96,7 @@ public class AppointmentService {
         appointmentRepository.save(appointment);
     }
 
+    @Transactional(readOnly = true)
     public List<AppointmentResponseDTO> listAppointmentByPet(Long petId) {
 
         return appointmentRepository.findByPet(petId)
@@ -102,6 +105,7 @@ public class AppointmentService {
                 .toList();
     }
 
+    @Transactional(readOnly = true)
     public List<AppointmentResponseDTO> listAppointmentByTutor(Long tutorId) {
 
         return appointmentRepository.findByPetTutor(tutorId)
