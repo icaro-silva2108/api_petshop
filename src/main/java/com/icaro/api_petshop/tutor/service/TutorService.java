@@ -48,13 +48,15 @@ public class TutorService {
         );
     }
 
-    public void loginValidation(String email, String password) {
+    public TutorResponseDTO loginValidation(String email, String password) {
 
         Tutor tutor = tutorRepository.findByEmail(email).orElseThrow(InvalidCredentialsException::new);
 
         if (!passwordEncoder.matches(password, tutor.getPasswordHash())) {
             throw new InvalidCredentialsException();
         }
+
+        return toResponseDTO(tutor);
     }
 
     public TutorResponseDTO createTutor(TutorRequestDTO dto) {

@@ -69,6 +69,7 @@ public class AppointmentService {
                 dto.scheduledDateTime()
         );
 
+
         appointmentRepository.save(appointment);
         return toResponseDTO(appointment);
     }
