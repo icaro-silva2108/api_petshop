@@ -100,7 +100,7 @@ public class AppointmentService {
     @Transactional(readOnly = true)
     public List<AppointmentResponseDTO> listAppointmentByPet(Long petId) {
 
-        return appointmentRepository.findByPet(petId)
+        return appointmentRepository.findByPetId(petId)
                 .stream()
                 .map(this::toResponseDTO)
                 .toList();
@@ -109,7 +109,7 @@ public class AppointmentService {
     @Transactional(readOnly = true)
     public List<AppointmentResponseDTO> listAppointmentByTutor(Long tutorId) {
 
-        return appointmentRepository.findByPetTutor(tutorId)
+        return appointmentRepository.findByPetTutorId(tutorId)
                 .stream()
                 .map(this::toResponseDTO)
                 .toList();
