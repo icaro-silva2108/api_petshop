@@ -48,7 +48,7 @@ public class TutorService {
         );
     }
 
-    public TutorResponseDTO loginValidation(String email, String password) {
+    public Tutor loginValidation(String email, String password) {
 
         Tutor tutor = tutorRepository.findByEmail(email).orElseThrow(InvalidCredentialsException::new);
 
@@ -56,7 +56,7 @@ public class TutorService {
             throw new InvalidCredentialsException();
         }
 
-        return toResponseDTO(tutor);
+        return tutor;
     }
 
     public TutorResponseDTO createTutor(TutorRequestDTO dto) {
