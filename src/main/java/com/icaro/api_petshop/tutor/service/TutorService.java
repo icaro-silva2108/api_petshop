@@ -9,7 +9,6 @@ import com.icaro.api_petshop.tutor.dto.TutorResponseDTO;
 import com.icaro.api_petshop.tutor.dto.TutorUpdateDTO;
 import com.icaro.api_petshop.tutor.model.Tutor;
 import com.icaro.api_petshop.tutor.repository.TutorRepository;
-import com.icaro.api_petshop.exceptions.EmailNotFound;
 
 import java.util.List;
 
@@ -52,6 +51,9 @@ public class TutorService {
 
         Tutor tutor = tutorRepository.findByEmail(email).orElseThrow(InvalidCredentialsException::new);
 
+        if (!tutor.isActive()) {
+            throw new InvalidCredentialsException();
+        }
         if (!passwordEncoder.matches(password, tutor.getPasswordHash())) {
             throw new InvalidCredentialsException();
         }
@@ -85,14 +87,14 @@ public class TutorService {
 
     public void deleteTutor(Tutor tutor) {
 
-        petRepository.deleteByTutor(tutor);
-        tutorRepository.delete(tutor);
+        petRepository.findByTutorIdAndActiveTrue(tutor.getId()).forEach(pet -> pet.setActive(false));
+        tutor.setActive(false);
     }
 
     @Transactional(readOnly = true)
     public List<PetResponseDTO> getTutorPets(Tutor tutor) {
 
-        return petRepository.findByTutorId(tutor.getId())
+        return petRepository.findByTutorIdAndActiveTrue(tutor.getId())
                 .stream()
                 .map(this::toPetResponseDTO)
                 .toList();

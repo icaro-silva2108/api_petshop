@@ -50,10 +50,13 @@ public class PetService {
 
     public Pet findPetOwner(Long id, Tutor tutor) {
 
-        Pet pet = petRepository.findById(id).orElseThrow(
+        Pet pet = petRepository.findByIdAndActiveTrue(id).orElseThrow(
                 () -> new EntityNotFoundException("pet not found")
         );
 
+        if (!pet.isActive()){
+            throw new EntityNotFoundException("pet not found");
+        }
         if (!pet.getTutor().getId().equals(tutor.getId())) {
             throw new UnauthorizedException("this pet does not belong to this tutor");
         }
@@ -64,7 +67,7 @@ public class PetService {
 
         Pet pet = findPetOwner(id, tutor);
 
-        petRepository.delete(pet);
+        pet.setActive(false);
     }
 
     public PetResponseDTO updatePet(Long id, Tutor tutor, PetUpdateDTO dto) {

@@ -33,6 +33,10 @@ public class Tutor implements UserDetails{
     @Column(name = "password_hash")
     private String passwordHash;
 
+    @Setter
+    @Column(name = "active")
+    private boolean active = true;
+
     public Tutor(String name, String email, String passwordHash) {
         this.name = Objects.requireNonNull(name, "name cannot be null");
         this.email = Objects.requireNonNull(email, "email cannot be null");

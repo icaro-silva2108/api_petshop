@@ -61,6 +61,9 @@ public class AppointmentService {
                 () -> new EntityNotFoundException("pet not found")
         );
 
+        if (!pet.isActive()){
+            throw new EntityNotFoundException("pet not found");
+        }
         if (!pet.getTutor().getId().equals(tutor.getId())) {
             throw new UnauthorizedException("this pet does not belong to this tutor");
         }

@@ -50,6 +50,10 @@ public class Pet {
     @Column(name = "age")
     private Integer age;
 
+    @Setter
+    @Column(name = "active")
+    private boolean active = true;
+
     public Pet(
             Tutor tutor,
             String name,
