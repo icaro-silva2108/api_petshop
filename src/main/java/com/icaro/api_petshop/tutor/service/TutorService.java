@@ -68,15 +68,7 @@ public class TutorService {
         return toResponseDTO(tutor);
     }
 
-    @Transactional(readOnly = true)
-    public Tutor findByEmail(String email) {
-
-        return tutorRepository.findByEmail(email).orElseThrow(EmailNotFound::new);
-    }
-
-    public TutorResponseDTO updateTutor(String email, TutorUpdateDTO dto) {
-
-        Tutor tutor = findByEmail(email);
+    public TutorResponseDTO updateTutor(Tutor tutor, TutorUpdateDTO dto) {
 
         if (dto.name() != null && !dto.name().isBlank()) {
             tutor.setName(dto.name());
@@ -88,21 +80,19 @@ public class TutorService {
             tutor.changePassword(passwordEncoder.encode(dto.password()));
         }
 
-        tutorRepository.save(tutor);
         return toResponseDTO(tutor);
     }
 
-    public void deleteTutor(String email) {
+    public void deleteTutor(Tutor tutor) {
 
-        Tutor tutor = findByEmail(email);
         petRepository.deleteByTutor(tutor);
-        tutorRepository.deleteByEmail(tutor);
+        tutorRepository.delete(tutor);
     }
 
     @Transactional(readOnly = true)
-    public List<PetResponseDTO> getTutorPets(String email) {
+    public List<PetResponseDTO> getTutorPets(Tutor tutor) {
 
-        return tutorRepository.findPetsByTutorEmail(email)
+        return petRepository.findByTutorId(tutor.getId())
                 .stream()
                 .map(this::toPetResponseDTO)
                 .toList();

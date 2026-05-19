@@ -10,7 +10,6 @@ import com.icaro.api_petshop.exceptions.UnauthorizedException;
 import com.icaro.api_petshop.pet.model.Pet;
 import com.icaro.api_petshop.pet.repository.PetRepository;
 import com.icaro.api_petshop.tutor.model.Tutor;
-import com.icaro.api_petshop.tutor.repository.TutorRepository;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -26,7 +25,6 @@ import org.springframework.stereotype.Service;
 public class AppointmentService {
 
     private final AppointmentRepository appointmentRepository;
-    private final TutorRepository tutorRepository;
     private final PetRepository petRepository;
 
     private AppointmentResponseDTO toResponseDTO(Appointment appointment) {
@@ -44,11 +42,20 @@ public class AppointmentService {
         );
     }
 
-    public AppointmentResponseDTO createAppointment(AppointmentRequestDTO dto) {
+    public Appointment getAppointmentOwner(Long appointmentId, Tutor tutor) {
 
-        Tutor tutor = tutorRepository.findById(dto.tutorId()).orElseThrow(
-                () -> new EntityNotFoundException("tutor not found")
+        Appointment appointment = appointmentRepository.findById(appointmentId).orElseThrow(
+                () -> new EntityNotFoundException("appointment not found")
         );
+
+        if (!appointment.getPetTutor().getId().equals(tutor.getId())) {
+
+            throw new UnauthorizedException("appointment does not belong to this tutor");
+        }
+        return appointment;
+    }
+
+    public AppointmentResponseDTO createAppointment(Tutor tutor, AppointmentRequestDTO dto) {
 
         Pet pet = petRepository.findById(dto.petId()).orElseThrow(
                 () -> new EntityNotFoundException("pet not found")
@@ -74,16 +81,10 @@ public class AppointmentService {
         return toResponseDTO(appointment);
     }
 
-    public void cancelAppointment(Long tutorId, Long appointmentId) {
+    public void cancelAppointment(Tutor tutor, Long appointmentId) {
 
-        Appointment appointment = appointmentRepository.findById(appointmentId).orElseThrow(
-                () -> new EntityNotFoundException("appointment not found")
-        );
+        Appointment appointment = getAppointmentOwner(appointmentId, tutor);
 
-        if (!appointment.getPetTutor().getId().equals(tutorId)) {
-
-            throw new UnauthorizedException("appointment does not belong to this tutor");
-        }
         if (appointment.getStatus() == AppointmentStatus.CANCELED) {
 
             throw new IllegalStateException("appointment is already canceled");
@@ -94,7 +95,6 @@ public class AppointmentService {
         }
 
         appointment.setStatus(AppointmentStatus.CANCELED);
-        appointmentRepository.save(appointment);
     }
 
     @Transactional(readOnly = true)
@@ -107,24 +107,18 @@ public class AppointmentService {
     }
 
     @Transactional(readOnly = true)
-    public List<AppointmentResponseDTO> listAppointmentByTutor(Long tutorId) {
+    public List<AppointmentResponseDTO> listAppointmentByTutor(Tutor tutor) {
 
-        return appointmentRepository.findByPetTutorId(tutorId)
+        return appointmentRepository.findByPetTutorId(tutor.getId())
                 .stream()
                 .map(this::toResponseDTO)
                 .toList();
     }
 
-    public AppointmentResponseDTO rescheduleAppointment(Long tutorId, Long appointmentId, LocalDateTime rescheduledDateTime) {
+    public AppointmentResponseDTO rescheduleAppointment(Tutor tutor, Long appointmentId, LocalDateTime rescheduledDateTime) {
 
-        Appointment appointment = appointmentRepository.findById(appointmentId).orElseThrow(
-                () -> new EntityNotFoundException("appointment not found")
-        );
+        Appointment appointment = getAppointmentOwner(appointmentId, tutor);
 
-        if (!appointment.getPetTutor().getId().equals(tutorId)) {
-
-            throw new UnauthorizedException("appointment does not belong to this tutor");
-        }
         if (rescheduledDateTime.isBefore(LocalDateTime.now())) {
 
             throw new InvalidDateException("can not reschedule in the past");
@@ -136,20 +130,13 @@ public class AppointmentService {
 
         appointment.setStatus(AppointmentStatus.RESCHEDULED);
         appointment.setScheduledDateTime(rescheduledDateTime);
-        appointmentRepository.save(appointment);
         return toResponseDTO(appointment);
     }
 
-    public void completeAppointment(Long tutorId, Long appointmentId) {
+    public void completeAppointment(Tutor tutor, Long appointmentId) {
 
-        Appointment appointment = appointmentRepository.findById(appointmentId).orElseThrow(
-                () -> new EntityNotFoundException("appointment not found")
-        );
+        Appointment appointment = getAppointmentOwner(appointmentId, tutor);
 
-        if (!appointment.getPetTutor().getId().equals(tutorId)) {
-
-            throw new UnauthorizedException("appointment does not belong to this tutor");
-        }
         if (appointment.getStatus() == AppointmentStatus.CANCELED) {
 
             throw new IllegalStateException("can not complete a canceled appointment");
@@ -160,6 +147,5 @@ public class AppointmentService {
         }
 
         appointment.setStatus(AppointmentStatus.COMPLETED);
-        appointmentRepository.save(appointment);
     }
 }

@@ -13,9 +13,4 @@ import org.springframework.data.repository.query.Param;
 public interface TutorRepository extends JpaRepository<Tutor, Long> {
 
     Optional<Tutor> findByEmail(String email);
-
-    void deleteByEmail(Tutor tutor);
-
-    @Query("SELECT p FROM Pet p WHERE p.tutor.email = :email")
-    List<Pet> findPetsByTutorEmail(@Param("email") String email);
 }

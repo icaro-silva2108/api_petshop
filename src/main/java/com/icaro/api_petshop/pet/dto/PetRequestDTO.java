@@ -10,9 +10,6 @@ import jakarta.validation.constraints.NotNull;
 
 public record PetRequestDTO(
 
-    @NotNull(message = "tutor id is required")
-    Long tutorId,
-
     @NotBlank(message = "name is required")
     String name,
 

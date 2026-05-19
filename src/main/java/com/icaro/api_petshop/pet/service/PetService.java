@@ -20,7 +20,6 @@ import org.springframework.transaction.annotation.Transactional;
 public class PetService {
 
     private final PetRepository petRepository;
-    private final TutorRepository tutorRepository;
 
     private PetResponseDTO toResponseDTO(Pet pet) {
         return new PetResponseDTO(
@@ -34,11 +33,7 @@ public class PetService {
                 pet.getAge());
     }
 
-    public PetResponseDTO createPet(PetRequestDTO dto) {
-
-        Tutor tutor = tutorRepository.findById(dto.tutorId()).orElseThrow(
-                () -> new EntityNotFoundException("tutor not found to the given id")
-        );
+    public PetResponseDTO createPet(Tutor tutor, PetRequestDTO dto) {
 
         Pet pet = new Pet(
                 tutor,
@@ -53,11 +48,7 @@ public class PetService {
         return toResponseDTO(pet);
     }
 
-    public void deletePet(Long id, String email) {
-
-        Tutor tutor = tutorRepository.findByEmail(email).orElseThrow(
-                () -> new EntityNotFoundException("tutor not found")
-        );
+    public Pet findPetOwner(Long id, Tutor tutor) {
 
         Pet pet = petRepository.findById(id).orElseThrow(
                 () -> new EntityNotFoundException("pet not found")
@@ -66,23 +57,19 @@ public class PetService {
         if (!pet.getTutor().getId().equals(tutor.getId())) {
             throw new UnauthorizedException("this pet does not belong to this tutor");
         }
+        return pet;
+    }
+
+    public void deletePet(Long id, Tutor tutor) {
+
+        Pet pet = findPetOwner(id, tutor);
 
         petRepository.delete(pet);
     }
 
-    public PetResponseDTO updatePet(Long id, String tutorEmail, PetUpdateDTO dto) {
+    public PetResponseDTO updatePet(Long id, Tutor tutor, PetUpdateDTO dto) {
 
-     Tutor tutor = tutorRepository.findByEmail(tutorEmail).orElseThrow(
-             () -> new EntityNotFoundException("tutor not found")
-     );
-
-     Pet pet = petRepository.findById(id).orElseThrow(
-             () -> new EntityNotFoundException("pet not found")
-     );
-
-     if (!pet.getTutor().getId().equals(tutor.getId())) {
-         throw new UnauthorizedException("this pet does not belong to this tutor");
-     }
+     Pet pet = findPetOwner(id, tutor);
 
      if (dto.name() != null && !dto.name().isBlank()) {
          pet.setName(dto.name());
@@ -103,7 +90,6 @@ public class PetService {
          pet.setAge(dto.age());
      }
 
-     petRepository.save(pet);
      return toResponseDTO(pet);
     }
 }
