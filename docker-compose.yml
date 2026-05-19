@@ -1,0 +1,31 @@
+version: "3.9"
+
+services:
+
+  postgres:
+    image: postgres:17
+    container_name: petshop-db
+    environment:
+      POSTGRES_DB: petshop
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  app:
+    build: .
+    container_name: petshop-api
+    depends_on:
+      - postgres
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/petshop
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: postgres
+      JWT_SECRET: GfjHrb2n8Hde8+U9Azu4uzU8noYuxYQYBMQZXwwoZmw=
+    ports:
+      - "8080:8080"
+
+volumes:
+  postgres_data:

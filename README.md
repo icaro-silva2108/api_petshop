@@ -134,7 +134,63 @@ src/main/java/com/icaro/api_petshop/
 - status
 - scheduledDateTime
 - createdAt
+---
+# 🐋 Docker Support
+This project includes full Docker support for both the Spring Boot API and the PostgreSQL database.
 
+### Docker Files
+
+#### Dockerfile
+
+- Defines the image used to build and run the application.
+
+```dockerfile
+FROM eclipse-temurin:21-jdk
+
+WORKDIR /app
+
+COPY . .
+
+RUN ./mvnw clean package -DskipTests
+
+CMD ["java", "-jar", "target/api_petshop-0.0.1-SNAPSHOT.jar"]
+```
+
+#### docker-compose.yml
+- Orchestrates the API and PostgreSQL containers.
+
+```yaml
+version: "3.9"
+
+services:
+  postgres:
+    image: postgres:17
+    container_name: petshop-db
+    environment:
+      POSTGRES_DB: petshop
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  app:
+    build: .
+    container_name: petshop-api
+    depends_on:
+      - postgres
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/petshop
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: postgres
+      JWT_SECRET: your-base64-secret
+    ports:
+      - "8080:8080"
+
+volumes:
+  postgres_data:
+```
 ---
 
 ## 🔄 Appointment Status Flow
@@ -260,7 +316,23 @@ http://localhost:8080/swagger-ui.html
 ```
 
 ---
+# 📦 Running Locally with Docker
+To build and start the complete application stack (API + PostgreSQL), run:
+```bash
+docker compose up --build
+```
 
+After the containers are started, the application will be available at:
+
+- API: http://localhost:8080
+- Swagger UI: http://localhost:8080/swagger-ui/index.html  
+
+To stop the cointainers:
+```bash
+docker compose down
+```
+
+---
 ## 🧪 Testing the API
 
 You can test the endpoints using:
@@ -295,9 +367,7 @@ Typical workflow:
 ## 🔮 Future Improvements
 
 - Unit and integration tests
-- Docker and Docker Compose
 - CI/CD pipeline
-- Role-based authorization
 - Automatic auditing
 
 ---
@@ -306,8 +376,8 @@ Typical workflow:
 
 **Icaro Pelanda Silva**
 
-- LinkedIn: https://www.linkedin.com/in/your-linkedin-profile
-- GitHub: https://github.com/your-github-username
+- LinkedIn: https://www.linkedin.com/in/icaro-silva-10885a365/
+- GitHub: https://github.com/icaro-silva2108
 
 ---
 
