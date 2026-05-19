@@ -44,25 +44,25 @@ public class TutorController {
                 .body(response);
     }
 
-    @PatchMapping("/{email}")
+    @PatchMapping("/me")
     public ResponseEntity<TutorResponseDTO> updateTutor(
-            @PathVariable("email") String email,
+            @AuthenticationPrincipal Tutor tutor,
             @RequestBody @Valid TutorUpdateDTO dto) {
 
-        TutorResponseDTO response = tutorService.updateTutor(email, dto);
+        TutorResponseDTO response = tutorService.updateTutor(tutor, dto);
         return ResponseEntity.ok(response);
     }
 
-    @DeleteMapping("/{email}")
-    public ResponseEntity<Void> cancelRegister(@PathVariable("email") String email) {
+    @DeleteMapping("/me")
+    public ResponseEntity<Void> cancelRegister(@AuthenticationPrincipal Tutor tutor) {
 
-        tutorService.deleteTutor(email);
+        tutorService.deleteTutor(tutor);
         return ResponseEntity.noContent().build();
     }
 
-    @GetMapping("/{email}/pets")
-    public ResponseEntity<List<PetResponseDTO>> getTutorPets(@PathVariable("email") String email) {
+    @GetMapping("/me/pets")
+    public ResponseEntity<List<PetResponseDTO>> getTutorPets(@AuthenticationPrincipal Tutor tutor) {
 
-        return ResponseEntity.ok(tutorService.getTutorPets(email));
+        return ResponseEntity.ok(tutorService.getTutorPets(tutor));
     }
 }

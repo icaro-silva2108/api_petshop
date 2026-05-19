@@ -4,6 +4,7 @@ import com.icaro.api_petshop.appointment.dto.AppointmentRequestDTO;
 import com.icaro.api_petshop.appointment.dto.AppointmentRescheduleDTO;
 import com.icaro.api_petshop.appointment.dto.AppointmentResponseDTO;
 import com.icaro.api_petshop.appointment.service.AppointmentService;
+import com.icaro.api_petshop.tutor.model.Tutor;
 
 import java.util.List;
 
@@ -11,6 +12,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -21,18 +23,20 @@ public class AppointmentController {
     private final AppointmentService appointmentService;
 
     @PostMapping
-    public ResponseEntity<AppointmentResponseDTO> scheduleAppointment(@RequestBody @Valid AppointmentRequestDTO dto) {
+    public ResponseEntity<AppointmentResponseDTO> scheduleAppointment(
+            @AuthenticationPrincipal Tutor tutor,
+            @RequestBody @Valid AppointmentRequestDTO dto) {
 
-        AppointmentResponseDTO response = appointmentService.createAppointment(dto);
+        AppointmentResponseDTO response = appointmentService.createAppointment(tutor, dto);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
-    @PatchMapping("/{tutor-id}/{appointment-id}/cancel")
+    @PatchMapping("/{appointment-id}/cancel")
     public ResponseEntity<Void> cancelAppointment(
-            @PathVariable("tutor-id") Long tutorId,
+            @AuthenticationPrincipal Tutor tutor,
             @PathVariable("appointment-id") Long appointmentId) {
 
-        appointmentService.cancelAppointment(tutorId, appointmentId);
+        appointmentService.cancelAppointment(tutor, appointmentId);
         return ResponseEntity.noContent().build();
     }
 
@@ -43,31 +47,31 @@ public class AppointmentController {
         return ResponseEntity.ok(response);
     }
 
-    @GetMapping("/tutor/{tutor-id}")
-    public ResponseEntity<List<AppointmentResponseDTO>> getAppointmentByTutor(@PathVariable("tutor-id") Long tutorId) {
+    @GetMapping("/tutor")
+    public ResponseEntity<List<AppointmentResponseDTO>> getAppointmentByTutor(@AuthenticationPrincipal Tutor tutor) {
 
-        List<AppointmentResponseDTO> response = appointmentService.listAppointmentByTutor(tutorId);
+        List<AppointmentResponseDTO> response = appointmentService.listAppointmentByTutor(tutor);
         return ResponseEntity.ok(response);
     }
 
-    @PatchMapping("/{tutor-id}/{appointment-id}/reschedule")
+    @PatchMapping("/{appointment-id}/reschedule")
     public ResponseEntity<AppointmentResponseDTO> rescheduleAppointment(
-            @PathVariable("tutor-id") Long tutorId,
+            @AuthenticationPrincipal Tutor tutor,
             @PathVariable("appointment-id") Long appointmentId,
             @RequestBody @Valid AppointmentRescheduleDTO dto
             ) {
 
-        AppointmentResponseDTO response = appointmentService.rescheduleAppointment(tutorId, appointmentId, dto.rescheduleDateTime());
+        AppointmentResponseDTO response = appointmentService.rescheduleAppointment(tutor, appointmentId, dto.rescheduleDateTime());
         return ResponseEntity.ok(response);
     }
 
-    @PatchMapping("/{tutor-id}/{appointment-id}/complete")
+    @PatchMapping("/{appointment-id}/complete")
     public ResponseEntity<Void> completeAppointment(
-            @PathVariable("tutor-id") Long tutorId,
+            @AuthenticationPrincipal Tutor tutor,
             @PathVariable("appointment-id") Long appointmentId
             ) {
 
-        appointmentService.completeAppointment(tutorId, appointmentId);
+        appointmentService.completeAppointment(tutor, appointmentId);
         return ResponseEntity.noContent().build();
     }
 
