@@ -1,136 +1,77 @@
-# 🐾 Petshop API
+# 🐾 Pet Shop API
 
-A RESTful API for managing a petshop, built with **Java 21** and **Spring Boot 4**. It supports tutor registration, pet management, and appointment scheduling, with JWT-based authentication.
+A RESTful API for managing tutors, pets, and service appointments in a pet shop.
+
+This project was built to practice modern backend development with Java and Spring Boot, covering authentication, authorization, data validation, business rules, and soft delete.
+
+---
+
+## 🚀 Features
+
+### 👤 Tutor Management
+- Sign up new tutors
+- Authenticate with JWT
+- Update profile information
+- Soft delete tutor accounts
+- View authenticated tutor profile (`/tutors/me`)
+- List all active pets owned by the tutor
+
+### 🐶 Pet Management
+- Register pets linked to the authenticated tutor
+- Update pet information
+- Soft delete pets
+- Ownership validation (a tutor can only manage their own pets)
+
+### 📅 Appointment Management
+- Schedule appointments for services
+- Cancel appointments
+- Reschedule appointments
+- Mark appointments as completed
+- List appointments by tutor or pet
+
+### 🔐 Security
+- JWT-based authentication
+- Protected endpoints using Spring Security
+- Ownership checks for all sensitive operations
+
+### 📄 API Documentation
+- Interactive Swagger/OpenAPI documentation
 
 ---
 
 ## 🛠️ Tech Stack
 
-- **Java 21**
-- **Spring Boot 4**
-- **Spring Security** (JWT authentication)
-- **Spring Data JPA** + **Hibernate**
-- **PostgreSQL**
-- **Lombok**
-- **Bean Validation**
-- **SpringDoc OpenAPI** (Swagger UI)
-- **dotenv-java** (environment variable management)
-- **Maven**
+- Java 21
+- Spring Boot
+- Spring Security
+- JWT (JSON Web Token)
+- Spring Data JPA
+- Hibernate
+- PostgreSQL
+- Bean Validation
+- Lombok
+- Swagger / OpenAPI
+- Maven
 
 ---
 
-## 📋 Prerequisites
+## 🧱 Project Architecture
 
-- Java 21+
-- Maven 3.9+
-- PostgreSQL running locally (or any accessible instance)
+The application follows a layered architecture:
 
----
-
-## ⚙️ Configuration
-
-Create a `.env` file in the project root with the following variables:
-
-```env
-DB_URL=jdbc:postgresql://localhost:5432/petshop_db
-DB_USERNAME=your_postgres_username
-DB_PASSWORD=your_postgres_password
-JWT_SECRET=your_base64_encoded_secret
+```text
+Controller → Service → Repository → Database
 ```
 
-The application uses `ddl-auto: update`, so Hibernate will create/update the database schema automatically on startup.
+### Layers
+- **Controller**: Handles HTTP requests and responses.
+- **Service**: Contains business rules and validations.
+- **Repository**: Data access with Spring Data JPA.
+- **DTOs**: Separate request and response models.
 
 ---
 
-## 🚀 Running the Application
-
-```bash
-# Clone the repository
-git clone https://github.com/icaro-silva2108/api_petshop.git
-cd api_petshop
-
-# Build and run
-./mvnw spring-boot:run
-```
-
-The API will be available at `http://localhost:8080`.
-
----
-
-## 📖 API Documentation
-
-Interactive Swagger UI is available at:
-
-```
-http://localhost:8080/swagger-ui.html
-```
-
----
-
-## 🔐 Authentication
-
-This API uses **JWT Bearer tokens**. After signing in, include the token in your requests:
-
-```
-Authorization: Bearer <your_token>
-```
-
----
-
-## 📡 Endpoints
-
-### Auth
-
-| Method | Endpoint        | Description          | Auth Required |
-|--------|-----------------|----------------------|---------------|
-| POST   | `/auth/signin`  | Authenticate a tutor | No            |
-
-### Tutors
-
-| Method | Endpoint              | Description                    | Auth Required |
-|--------|-----------------------|--------------------------------|---------------|
-| POST   | `/tutors/signup`      | Register a new tutor           | No            |
-| GET    | `/tutors/me`          | Get authenticated tutor info   | Yes           |
-| PATCH  | `/tutors/{email}`     | Update tutor data              | Yes           |
-| DELETE | `/tutors/{email}`     | Delete tutor account           | Yes           |
-| GET    | `/tutors/{email}/pets`| List all pets of a tutor       | Yes           |
-
-### Pets
-
-| Method | Endpoint                          | Description        | Auth Required |
-|--------|-----------------------------------|--------------------|---------------|
-| POST   | `/pets`                           | Register a new pet | Yes           |
-| PATCH  | `/pets/{tutor-email}/{id}`        | Update pet data    | Yes           |
-| DELETE | `/pets/{tutor-email}/{id}`        | Remove a pet       | Yes           |
-
-### Appointments
-
-| Method | Endpoint                                         | Description                       | Auth Required |
-|--------|--------------------------------------------------|-----------------------------------|---------------|
-| POST   | `/appointments`                                  | Schedule a new appointment        | Yes           |
-| GET    | `/appointments/pet/{pet-id}`                     | List appointments by pet          | Yes           |
-| GET    | `/appointments/tutor/{tutor-id}`                 | List appointments by tutor        | Yes           |
-| PATCH  | `/appointments/{tutor-id}/{appointment-id}/cancel`     | Cancel an appointment       | Yes           |
-| PATCH  | `/appointments/{tutor-id}/{appointment-id}/reschedule` | Reschedule an appointment   | Yes           |
-| PATCH  | `/appointments/{tutor-id}/{appointment-id}/complete`   | Mark appointment as complete| Yes           |
-
----
-
-## 📦 Domain Enums
-
-**Animal Types:** `DOG`, `CAT`, `BIRD`, `RABBIT`, `FISH`, `HORSE`
-
-**Animal Sizes:** `SMALL`, `MEDIUM`, `LARGE`
-
-**Animal Sex:** `MALE`, `FEMALE`
-
-**Appointment Types:** `VETERINARY`, `JUST_GROOMING`, `JUST_BATH`, `COMPLETE_GROOMING`
-
-**Appointment Status:** `SCHEDULED`, `RESCHEDULED`, `CANCELED`, `COMPLETED`
-
----
-
-## 🏗️ Project Structure
+## 📂 Project Structure
 
 ```
 src/main/java/com/icaro/api_petshop/
@@ -162,3 +103,214 @@ src/main/java/com/icaro/api_petshop/
     ├── repository/
     └── service/
 ```
+
+---
+
+## 🗄️ Database Model
+
+### Tutor
+- id
+- name
+- email
+- passwordHash
+- active
+
+### Pet
+- id
+- tutor
+- name
+- type
+- sex
+- breed
+- size
+- age
+- active
+
+### Appointment
+- id
+- petTutor
+- pet
+- serviceType
+- status
+- scheduledDateTime
+- createdAt
+
+---
+
+## 🔄 Appointment Status Flow
+
+- `SCHEDULED`
+- `RESCHEDULED`
+- `CANCELED`
+- `COMPLETED`
+
+Business rules prevent invalid transitions, such as:
+- Canceling an already completed appointment
+- Completing a canceled appointment
+- Scheduling or rescheduling in the past
+
+---
+
+## 🧹 Soft Delete
+
+Instead of physically removing data, tutors and pets are marked as inactive using an `active` flag.
+
+### Benefits
+- Preserves appointment history
+- Avoids foreign key constraint issues
+- Prevents access to deleted records
+
+---
+
+## 🔐 Authentication Flow
+
+1. Tutor signs up.
+2. Tutor logs in with email and password.
+3. API returns a JWT token.
+4. Token is used as a Bearer Token in protected endpoints.
+
+### Example Login Response
+
+```json
+{
+  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+  "tutorResponse": {
+    "id": 1,
+    "name": "Icaro Silva",
+    "email": "icarosilva@email.com"
+  }
+}
+```
+
+---
+
+## 📌 Main Endpoints
+
+### Auth
+| Method | Endpoint | Description |
+|------|------|------|
+| POST | `/auth/signin` | Authenticate tutor |
+
+### Tutors
+| Method | Endpoint | Description |
+|------|------|------|
+| POST | `/tutors/signup` | Create account |
+| GET | `/tutors/me` | Get authenticated tutor |
+| PATCH | `/tutors/me` | Update profile |
+| DELETE | `/tutors/me` | Soft delete account |
+| GET | `/tutors/me/pets` | List active pets |
+
+### Pets
+| Method | Endpoint | Description |
+|------|------|------|
+| POST | `/pets` | Register pet |
+| PATCH | `/pets/{id}` | Update pet |
+| DELETE | `/pets/{id}` | Soft delete pet |
+
+### Appointments
+| Method | Endpoint | Description |
+|------|------|------|
+| POST | `/appointments` | Schedule appointment |
+| PATCH | `/appointments/{id}/cancel` | Cancel appointment |
+| PATCH | `/appointments/{id}/reschedule` | Reschedule appointment |
+| PATCH | `/appointments/{id}/complete` | Complete appointment |
+| GET | `/appointments/tutor` | List tutor appointments |
+| GET | `/appointments/pet/{petId}` | List appointments by pet |
+
+---
+
+## ⚙️ Getting Started
+
+### 1. Clone the Repository
+
+```bash
+git clone https://github.com/icaro-silva2108/api_petshop.git
+cd api_petshop
+```
+
+### 2. Configure PostgreSQL
+
+Create a database:
+
+```sql
+CREATE DATABASE api_petshop;
+```
+
+### 3. Configure Environment Variables
+
+Create a `.env` file or set the following variables:
+
+```env
+DB_URL=jdbc:postgresql://localhost:5432/api_petshop
+DB_USERNAME=postgres
+DB_PASSWORD=your_password
+JWT_SECRET=your_secret_key
+```
+
+### 4. Run the Application
+
+```bash
+./mvnw spring-boot:run
+```
+
+### 5. Access Swagger UI
+
+```text
+http://localhost:8080/swagger-ui.html
+```
+
+---
+
+## 🧪 Testing the API
+
+You can test the endpoints using:
+- Postman
+- Swagger UI
+- Insomnia
+
+Typical workflow:
+1. Create a tutor account.
+2. Sign in to receive a JWT token.
+3. Authorize requests with Bearer Token.
+4. Create pets.
+5. Schedule appointments.
+
+---
+
+## 📚 Key Concepts Practiced
+
+- REST API design
+- Layered architecture
+- JWT authentication and authorization
+- DTO pattern
+- Bean Validation
+- Exception handling
+- Soft delete
+- Ownership validation
+- JPA entity relationships
+- Transaction management with `@Transactional`
+
+---
+
+## 🔮 Future Improvements
+
+- Unit and integration tests
+- Docker and Docker Compose
+- CI/CD pipeline
+- Role-based authorization
+- Automatic auditing
+
+---
+
+## 👨‍💻 Author
+
+**Icaro Pelanda Silva**
+
+- LinkedIn: https://www.linkedin.com/in/your-linkedin-profile
+- GitHub: https://github.com/your-github-username
+
+---
+
+## 📄 License
+
+This project is for educational purposes.
