@@ -135,64 +135,6 @@ src/main/java/com/icaro/api_petshop/
 - scheduledDateTime
 - createdAt
 ---
-# 🐋 Docker Support
-This project includes full Docker support for both the Spring Boot API and the PostgreSQL database.
-
-### Docker Files
-
-#### Dockerfile
-
-- Defines the image used to build and run the application.
-
-```dockerfile
-FROM eclipse-temurin:21-jdk
-
-WORKDIR /app
-
-COPY . .
-
-RUN ./mvnw clean package -DskipTests
-
-CMD ["java", "-jar", "target/api_petshop-0.0.1-SNAPSHOT.jar"]
-```
-
-#### docker-compose.yml
-- Orchestrates the API and PostgreSQL containers.
-
-```yaml
-version: "3.9"
-
-services:
-  postgres:
-    image: postgres:17
-    container_name: petshop-db
-    environment:
-      POSTGRES_DB: petshop
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-    ports:
-      - "5432:5432"
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-
-  app:
-    build: .
-    container_name: petshop-api
-    depends_on:
-      - postgres
-    environment:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/petshop
-      SPRING_DATASOURCE_USERNAME: postgres
-      SPRING_DATASOURCE_PASSWORD: postgres
-      JWT_SECRET: your-base64-secret
-    ports:
-      - "8080:8080"
-
-volumes:
-  postgres_data:
-```
----
-
 ## 🔄 Appointment Status Flow
 
 - `SCHEDULED`
@@ -274,7 +216,63 @@ Instead of physically removing data, tutors and pets are marked as inactive usin
 | GET | `/appointments/pet/{petId}` | List appointments by pet |
 
 ---
+# 🐋 Docker Support
+This project includes full Docker support for both the Spring Boot API and the PostgreSQL database.
 
+### Docker Files
+
+#### Dockerfile
+
+- Defines the image used to build and run the application.
+
+```dockerfile
+FROM eclipse-temurin:21-jdk
+
+WORKDIR /app
+
+COPY . .
+
+RUN ./mvnw clean package -DskipTests
+
+CMD ["java", "-jar", "target/api_petshop-0.0.1-SNAPSHOT.jar"]
+```
+
+#### docker-compose.yml
+- Orchestrates the API and PostgreSQL containers.
+
+```yaml
+version: "3.9"
+
+services:
+  postgres:
+    image: postgres:17
+    container_name: petshop-db
+    environment:
+      POSTGRES_DB: petshop
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  app:
+    build: .
+    container_name: petshop-api
+    depends_on:
+      - postgres
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/petshop
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: postgres
+      JWT_SECRET: your-base64-secret
+    ports:
+      - "8080:8080"
+
+volumes:
+  postgres_data:
+```
+---
 ## ⚙️ Getting Started
 
 ### 1. Clone the Repository
