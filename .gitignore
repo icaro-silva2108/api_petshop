@@ -23,6 +23,7 @@ out/
 ### Enviromental Variables ###
 .env
 src/main/resources/application.yaml
+src/test/resources/application-test.yaml
 
 ### NetBeans ###
 /nbproject/private/
