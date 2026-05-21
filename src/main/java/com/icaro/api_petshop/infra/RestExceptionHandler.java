@@ -1,16 +1,25 @@
 package com.icaro.api_petshop.infra;
 
-
 import com.icaro.api_petshop.exceptions.EmailNotFound;
 import com.icaro.api_petshop.exceptions.InvalidCredentialsException;
 import com.icaro.api_petshop.exceptions.InvalidDateException;
 import com.icaro.api_petshop.exceptions.UnauthorizedException;
+
+import java.nio.file.AccessDeniedException;
+import java.util.HashMap;
+import java.util.Map;
+
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.JwtException;
+import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+
+import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
-import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 @ControllerAdvice
 public class RestExceptionHandler extends ResponseEntityExceptionHandler {
@@ -30,7 +39,7 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(UnauthorizedException.class)
     private ResponseEntity<String> UnauthorizedHandler(UnauthorizedException exception) {
 
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(exception.getMessage());
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(exception.getMessage());
     }
 
     @ExceptionHandler(EntityNotFoundException.class)
@@ -49,5 +58,48 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
     private ResponseEntity<String> IllegalStateHandler(IllegalStateException exception) {
 
         return ResponseEntity.status(HttpStatus.CONFLICT).body(exception.getMessage());
+    }
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    private ResponseEntity<Map<String, String>> NotValidArgumentsHandler(MethodArgumentNotValidException exception) {
+
+        Map<String, String> errors = new HashMap<>();
+
+        exception.getBindingResult().getFieldErrors()
+                .forEach(error ->
+                        errors.put(error.getField(), error.getDefaultMessage())
+                );
+
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errors);
+    }
+
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    private ResponseEntity<String> notValidJsonHandler(HttpMessageNotReadableException exception) {
+
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("invalid request body");
+    }
+
+    @ExceptionHandler(Exception.class)
+    private ResponseEntity<String> genericHandler(Exception exception) {
+
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("unexpected internal server error");
+    }
+
+    @ExceptionHandler(ExpiredJwtException.class)
+    private ResponseEntity<String> ExpiredJwtHandler(ExpiredJwtException exception){
+
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("expired token");
+    }
+
+    @ExceptionHandler(JwtException.class)
+    private ResponseEntity<String> InvalidJwtHandler(JwtException exception) {
+
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("invalid token");
+    }
+
+    @ExceptionHandler(AccessDeniedException.class)
+    private ResponseEntity<String> AccessDeniedHandler(AccessDeniedException exception) {
+
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body("access denied");
     }
 }
