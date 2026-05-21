@@ -11,9 +11,12 @@ import java.util.Map;
 
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtException;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
+import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.http.HttpStatus;
@@ -60,23 +63,30 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
         return ResponseEntity.status(HttpStatus.CONFLICT).body(exception.getMessage());
     }
 
-    @ExceptionHandler(MethodArgumentNotValidException.class)
-    private ResponseEntity<Map<String, String>> NotValidArgumentsHandler(MethodArgumentNotValidException exception) {
+    @Override
+    protected ResponseEntity<Object> handleMethodArgumentNotValid(
+            MethodArgumentNotValidException ex,
+            HttpHeaders headers,
+            HttpStatusCode status,
+            WebRequest request) {
 
         Map<String, String> errors = new HashMap<>();
 
-        exception.getBindingResult().getFieldErrors()
+        ex.getBindingResult().getFieldErrors()
                 .forEach(error ->
-                        errors.put(error.getField(), error.getDefaultMessage())
-                );
+                        errors.put(error.getField(), error.getDefaultMessage()));
 
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errors);
     }
 
-    @ExceptionHandler(HttpMessageNotReadableException.class)
-    private ResponseEntity<String> notValidJsonHandler(HttpMessageNotReadableException exception) {
+    @Override
+    protected ResponseEntity<Object> handleHttpMessageNotReadable(
+            HttpMessageNotReadableException ex,
+            HttpHeaders headers,
+            HttpStatusCode status,
+            WebRequest request) {
 
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("invalid request body");
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("invalid json");
     }
 
     @ExceptionHandler(Exception.class)
