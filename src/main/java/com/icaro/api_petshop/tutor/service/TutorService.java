@@ -1,5 +1,6 @@
 package com.icaro.api_petshop.tutor.service;
 
+import com.icaro.api_petshop.exceptions.EmailAlreadyExistsException;
 import com.icaro.api_petshop.exceptions.InvalidCredentialsException;
 import com.icaro.api_petshop.pet.dto.PetResponseDTO;
 import com.icaro.api_petshop.pet.model.Pet;
@@ -64,6 +65,10 @@ public class TutorService {
     public TutorResponseDTO createTutor(TutorRequestDTO dto) {
 
         String passwordHash = passwordEncoder.encode(dto.password());
+
+        if (tutorRepository.findByEmail(dto.email()).isPresent()) {
+            throw new EmailAlreadyExistsException();
+        }
         Tutor tutor = new Tutor(dto.name(), dto.email(), passwordHash);
 
         tutorRepository.save(tutor);
@@ -76,6 +81,10 @@ public class TutorService {
             tutor.setName(dto.name());
         }
         if (dto.email() != null && !dto.email().isBlank()) {
+
+            if (tutorRepository.findByEmail(dto.email()).isPresent()) {
+                throw new EmailAlreadyExistsException();
+            }
             tutor.setEmail(dto.email());
         }
         if (dto.password() != null && !dto.password().isBlank()) {
