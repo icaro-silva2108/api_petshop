@@ -7,7 +7,6 @@ import com.icaro.api_petshop.pet.dto.PetUpdateDTO;
 import com.icaro.api_petshop.pet.model.Pet;
 import com.icaro.api_petshop.pet.repository.PetRepository;
 import com.icaro.api_petshop.tutor.model.Tutor;
-import com.icaro.api_petshop.tutor.repository.TutorRepository;
 import jakarta.persistence.EntityNotFoundException;
 
 import lombok.RequiredArgsConstructor;
