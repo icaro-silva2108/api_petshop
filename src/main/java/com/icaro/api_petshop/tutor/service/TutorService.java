@@ -71,8 +71,8 @@ public class TutorService {
         }
         Tutor tutor = new Tutor(dto.name(), dto.email(), passwordHash);
 
-        tutorRepository.save(tutor);
-        return toResponseDTO(tutor);
+        Tutor saved = tutorRepository.save(tutor);
+        return toResponseDTO(saved);
     }
 
     public TutorResponseDTO updateTutor(Tutor tutor, TutorUpdateDTO dto) {

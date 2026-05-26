@@ -50,7 +50,7 @@ public class PetServiceTest {
     @BeforeEach
     void setup() {
 
-        tutor = new Tutor("test", "test@test.com", "hash123");
+        tutor = new Tutor("test", "test@test.com", "hash1234");
         savedPet = new Pet(tutor, "dog", AnimalType.DOG, AnimalSex.MALE, "breed", AnimalSize.SMALL, 1);
         savedPet.setActive(true);
 

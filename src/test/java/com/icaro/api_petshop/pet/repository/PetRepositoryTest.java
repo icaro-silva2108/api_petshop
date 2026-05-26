@@ -33,7 +33,7 @@ public class PetRepositoryTest {
     Pet pet;
     @BeforeEach
     void setup() {
-        tutor = new Tutor("test", "test@test.com", "hash123");
+        tutor = new Tutor("test", "test@test.com", "hash1234");
         pet = new Pet(tutor, "dog", AnimalType.DOG, AnimalSex.MALE, "breed", AnimalSize.SMALL, 1);
     }
 

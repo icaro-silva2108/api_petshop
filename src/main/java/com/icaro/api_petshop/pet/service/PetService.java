@@ -43,8 +43,8 @@ public class PetService {
                 dto.size(),
                 dto.age());
 
-        petRepository.save(pet);
-        return toResponseDTO(pet);
+        Pet saved = petRepository.save(pet);
+        return toResponseDTO(saved);
     }
 
     public Pet findPetOwner(Long id, Tutor tutor) {

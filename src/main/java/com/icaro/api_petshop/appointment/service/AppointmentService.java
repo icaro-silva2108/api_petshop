@@ -79,9 +79,8 @@ public class AppointmentService {
                 dto.scheduledDateTime()
         );
 
-
-        appointmentRepository.save(appointment);
-        return toResponseDTO(appointment);
+        Appointment saved = appointmentRepository.save(appointment);
+        return toResponseDTO(saved);
     }
 
     public void cancelAppointment(Tutor tutor, Long appointmentId) {
