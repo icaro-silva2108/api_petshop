@@ -1,9 +1,6 @@
 package com.icaro.api_petshop.infra;
 
-import com.icaro.api_petshop.exceptions.EmailNotFound;
-import com.icaro.api_petshop.exceptions.InvalidCredentialsException;
-import com.icaro.api_petshop.exceptions.InvalidDateException;
-import com.icaro.api_petshop.exceptions.UnauthorizedException;
+import com.icaro.api_petshop.exceptions.*;
 
 import java.nio.file.AccessDeniedException;
 import java.util.HashMap;
@@ -111,5 +108,11 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
     private ResponseEntity<String> AccessDeniedHandler(AccessDeniedException exception) {
 
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body("access denied");
+    }
+
+    @ExceptionHandler(EmailAlreadyExistsException.class)
+    private ResponseEntity<String> EmailAlreadyExistsHandler(EmailAlreadyExistsException exception) {
+
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(exception.getMessage());
     }
 }
