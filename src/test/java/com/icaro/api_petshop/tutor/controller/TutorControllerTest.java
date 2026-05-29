@@ -113,7 +113,6 @@ public class TutorControllerTest {
 
     @Test
     @DisplayName("should return the tutor info successfully")
-    @WithMockUser(username = "test@test.com")
     void meSuccess() throws Exception {
 
         Tutor tutor = new Tutor("test", "test@test.com", "hash1234");
