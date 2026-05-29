@@ -117,9 +117,11 @@ public class PetControllerTest {
     @DisplayName("should block the request from a non authenticated user 401 unauthorized")
     void createPetUnauthorized() throws Exception {
 
+        String requestBody = objectMapper.writeValueAsString(petRequestDTO);
+
         mockMvc.perform(post("/pets")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("any unauthorized request")
+                        .content(requestBody)
                         .with(csrf())
                 )
                 .andExpect(status().isUnauthorized());
@@ -141,7 +143,7 @@ public class PetControllerTest {
     }
 
     @Test
-    @DisplayName("should return 403 when pet not found")
+    @DisplayName("should return 404 when pet not found")
     void deletePetNotFound() throws Exception {
 
         doThrow(new EntityNotFoundException("pet not found"))

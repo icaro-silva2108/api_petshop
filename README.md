@@ -216,6 +216,34 @@ Instead of physically removing data, tutors and pets are marked as inactive usin
 | GET | `/appointments/pet/{petId}` | List appointments by pet |
 
 ---
+## Testing
+
+This project includes automated tests built with JUnit 5 and Mockito.
+
+The test suite covers the main layers of the application:
+
+- Repository tests using an H2 in-memory database to validate custom queries and persistence behavior.
+- Service tests with mocked dependencies to verify business rules, validations, and exception handling.
+- Controller tests using MockMvc to validate HTTP requests, responses, authentication requirements, and API behavior.
+- Auth tests covering tokens generation and tutor singin endpoint.
+
+### Technologies Used
+- JUnit 5
+- Mockito
+- Spring Boot Test
+- Data Jpa Test
+- MockMvc
+- H2 Database
+- Running the Tests
+
+Using Maven:
+```bash
+./mvnw test
+```
+### Notes
+The current test suite does not aim for full application coverage. Tests were primarily created for learning purposes and to support the project's CI/CD pipeline implementation. The focus was on understanding automated testing concepts, mocking, controller validation, and continuous integration workflows rather than exhaustively testing every possible scenario.
+
+---
 # 🐋 Docker Support
 This project includes full Docker support for both the Spring Boot API and the PostgreSQL database.
 
@@ -364,10 +392,8 @@ Typical workflow:
 
 ## 🔮 Future Improvements
 
-- Unit and integration tests
 - CI/CD pipeline
 - Automatic auditing
-
 ---
 
 ## 👨‍💻 Author
