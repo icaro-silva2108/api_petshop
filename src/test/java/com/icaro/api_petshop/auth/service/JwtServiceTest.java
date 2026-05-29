@@ -17,7 +17,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class JwtServiceTest {
 
     @Autowired
-    @InjectMocks
     JwtService jwtService;
 
     private Tutor tutor;
