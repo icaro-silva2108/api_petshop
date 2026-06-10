@@ -323,9 +323,9 @@ CREATE DATABASE api_petshop;
 Create a `.env` file or set the following variables:
 
 ```env
-DB_URL=jdbc:postgresql://localhost:5432/api_petshop
+DB_URL=jdbc:postgresql://localhost:5432/petshop
 DB_USERNAME=postgres
-DB_PASSWORD=your_password
+DB_PASSWORD=postgres
 JWT_SECRET=your_secret_key
 ```
 
@@ -392,8 +392,7 @@ Typical workflow:
 
 ## 🔮 Future Improvements
 
-- CI/CD pipeline
-- Automatic auditing
+- Deploy
 ---
 
 ## 👨‍💻 Author
