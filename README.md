@@ -254,15 +254,19 @@ This project includes full Docker support for both the Spring Boot API and the P
 - Defines the image used to build and run the application.
 
 ```dockerfile
-FROM eclipse-temurin:21-jdk
+FROM maven:3.9-eclipse-temurin-21 AS builder
 
 WORKDIR /app
 
 COPY . .
 
-RUN ./mvnw clean package -DskipTests
+RUN ./mvnw clean package
 
-CMD ["java", "-jar", "target/api_petshop-0.0.1-SNAPSHOT.jar"]
+FROM eclipse-temurin:21-jre
+
+COPY --from=builder /app/target/api_petshop-0.0.1-SNAPSHOT.jar api_petshop-0.0.1-SNAPSHOT.jar
+
+CMD ["java", "-jar", "api_petshop-0.0.1-SNAPSHOT.jar"]
 ```
 
 #### docker-compose.yml
