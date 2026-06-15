@@ -8,3 +8,12 @@ spring:
 jwt:
   secret: ${JWT_SECRET}
   expiration: 86400000
+
+server:
+  port: ${PORT:8080}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health
