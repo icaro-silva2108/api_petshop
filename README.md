@@ -394,9 +394,16 @@ Typical workflow:
 
 ---
 
-## 🔮 Future Improvements
+## Deploy
 
-- Deploy
+🔗 Swagger/OpenAPI:
+https://api-petshop-uqh5.onrender.com/swagger-ui/index.html
+
+🔗 Health Check:
+https://api-petshop-uqh5.onrender.com/actuator/health
+
+Note: Initial requests may take a few seconds due to Render's cold start behavior.
+
 ---
 
 ## 👨‍💻 Author
