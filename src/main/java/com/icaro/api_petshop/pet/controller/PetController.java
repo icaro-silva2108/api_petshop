@@ -7,6 +7,7 @@ import com.icaro.api_petshop.pet.dto.PetUpdateDTO;
 import com.icaro.api_petshop.pet.service.PetService;
 import com.icaro.api_petshop.tutor.model.Tutor;
 
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -14,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+@SecurityRequirement(name = "bearerAuth")
 @RestController
 @RequestMapping("/pets")
 @RequiredArgsConstructor

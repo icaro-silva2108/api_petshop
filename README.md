@@ -332,6 +332,8 @@ DB_USERNAME=postgres
 DB_PASSWORD=postgres
 JWT_SECRET=your_secret_key
 ```
+Obs: The secret key must be standard Base64.
+Avoid using '_' or '-', as they are not valid Base64 characters.
 
 ### 4. Run the Application
 

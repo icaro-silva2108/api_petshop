@@ -100,7 +100,7 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(JwtException.class)
     private ResponseEntity<String> InvalidJwtHandler(JwtException exception) {
-
+        logger.error("JWT error", exception);
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("invalid token");
     }
 

@@ -7,6 +7,7 @@ import com.icaro.api_petshop.tutor.dto.TutorUpdateDTO;
 import com.icaro.api_petshop.tutor.model.Tutor;
 import com.icaro.api_petshop.tutor.service.TutorService;
 
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -23,6 +24,7 @@ public class TutorController {
 
     private final TutorService tutorService;
 
+    @SecurityRequirement(name = "bearerAuth")
     @GetMapping("/me")
     public ResponseEntity<TutorResponseDTO> me(@AuthenticationPrincipal Tutor tutor) {
 
@@ -44,6 +46,7 @@ public class TutorController {
                 .body(response);
     }
 
+    @SecurityRequirement(name = "bearerAuth")
     @PatchMapping("/me")
     public ResponseEntity<TutorResponseDTO> updateTutor(
             @AuthenticationPrincipal Tutor tutor,
@@ -53,6 +56,7 @@ public class TutorController {
         return ResponseEntity.ok(response);
     }
 
+    @SecurityRequirement(name = "bearerAuth")
     @DeleteMapping("/me")
     public ResponseEntity<Void> cancelRegister(@AuthenticationPrincipal Tutor tutor) {
 
@@ -60,6 +64,7 @@ public class TutorController {
         return ResponseEntity.noContent().build();
     }
 
+    @SecurityRequirement(name = "bearerAuth")
     @GetMapping("/me/pets")
     public ResponseEntity<List<PetResponseDTO>> getTutorPets(@AuthenticationPrincipal Tutor tutor) {
 
