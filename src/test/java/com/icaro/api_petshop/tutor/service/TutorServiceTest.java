@@ -101,14 +101,14 @@ public class TutorServiceTest {
 
         Tutor tutor = new Tutor("test", email, "hash1234");
 
-        when(tutorRepository.findByEmail(email))
+        when(tutorRepository.findByEmailAndActiveTrue(email))
                 .thenReturn(Optional.of(tutor));
         when(passwordEncoder.matches(password, "hash1234"))
                 .thenReturn(true);
 
         Tutor tutorResult = tutorService.loginValidation(email, password);
 
-        verify(tutorRepository).findByEmail(email);
+        verify(tutorRepository).findByEmailAndActiveTrue(email);
         verify(passwordEncoder).matches(password, "hash1234");
 
         assertThat(tutorResult).isNotNull();
@@ -132,7 +132,7 @@ public class TutorServiceTest {
 
         Tutor tutor = new Tutor("test", "test@test.com", "hash1234");
 
-        when(tutorRepository.findByEmail("test@test.com"))
+        when(tutorRepository.findByEmailAndActiveTrue("test@test.com"))
                 .thenReturn(Optional.of(tutor));
 
         assertThatThrownBy(
@@ -148,7 +148,7 @@ public class TutorServiceTest {
         Tutor tutor = new Tutor("test", "test@test.com", "test1234");
         tutor.setActive(false);
 
-        when(tutorRepository.findByEmail("test@test.com"))
+        when(tutorRepository.findByEmailAndActiveTrue("test@test.com"))
                 .thenReturn(Optional.of(tutor));
 
         assertThatThrownBy(

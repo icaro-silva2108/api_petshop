@@ -74,4 +74,9 @@ public class Tutor implements UserDetails{
     public String getUsername() {
         return email;
     }
+
+    @Override
+    public boolean isEnabled() {
+        return this.active;
+    }
 }

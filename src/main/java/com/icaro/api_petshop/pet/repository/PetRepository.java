@@ -15,5 +15,5 @@ public interface PetRepository extends JpaRepository<Pet, Long> {
     List<Pet> findByTutorIdAndActiveTrue(@Param("tutorId") Long tutorId);
 
     @Query("SELECT p FROM Pet p WHERE p.id = :id AND p.active = true")
-    Optional<Pet> findByIdAndActiveTrue(Long id);
+    Optional<Pet> findByIdAndActiveTrue(@Param("id") Long id);
 }

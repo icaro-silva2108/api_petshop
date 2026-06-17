@@ -50,11 +50,8 @@ public class TutorService {
 
     public Tutor loginValidation(String email, String password) {
 
-        Tutor tutor = tutorRepository.findByEmail(email).orElseThrow(InvalidCredentialsException::new);
+        Tutor tutor = tutorRepository.findByEmailAndActiveTrue(email).orElseThrow(InvalidCredentialsException::new);
 
-        if (!tutor.isActive()) {
-            throw new InvalidCredentialsException();
-        }
         if (!passwordEncoder.matches(password, tutor.getPasswordHash())) {
             throw new InvalidCredentialsException();
         }
@@ -98,6 +95,7 @@ public class TutorService {
 
         petRepository.findByTutorIdAndActiveTrue(tutor.getId()).forEach(pet -> pet.setActive(false));
         tutor.setActive(false);
+        tutorRepository.save(tutor);
     }
 
     @Transactional(readOnly = true)
